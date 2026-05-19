@@ -1,7 +1,190 @@
-import 'dart:io';
+// import 'package:flutter/material.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';
+
+// class ProfileScreen extends StatefulWidget {
+//   const ProfileScreen({super.key});
+
+//   @override
+//   State<ProfileScreen> createState() => _ProfileScreenState();
+// }
+
+// class _ProfileScreenState extends State<ProfileScreen> {
+//   Map<String, dynamic> _userData = {};
+//   bool _isLoading = true;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadUserData();
+//   }
+
+//   Future<void> _loadUserData() async {
+//     final response = await Supabase.instance.client
+//         .from('users')
+//         .select()
+//         .limit(1);
+    
+//     if (response.isNotEmpty) {
+//       setState(() {
+//         _userData = response[0];
+//         _isLoading = false;
+//       });
+//     }
+//   }
+
+//   Future<void> _logout() async {
+//     await Supabase.instance.client.auth.signOut();
+//     if (mounted) {
+//       Navigator.pushReplacementNamed(context, '/');
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('My Profile'),
+//         backgroundColor: Colors.blue,
+//         foregroundColor: Colors.white,
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.logout),
+//             onPressed: _logout,
+//           ),
+//         ],
+//       ),
+//       body: _isLoading
+//           ? const Center(child: CircularProgressIndicator())
+//           : SingleChildScrollView(
+//               child: Column(
+//                 children: [
+//                   // Profile Header
+//                   Container(
+//                     width: double.infinity,
+//                     padding: const EdgeInsets.all(32),
+//                     decoration: BoxDecoration(
+//                       gradient: const LinearGradient(
+//                         colors: [Colors.blue, Colors.purple],
+//                       ),
+//                     ),
+//                     child: Column(
+//                       children: [
+//                         CircleAvatar(
+//                           radius: 60,
+//                           backgroundColor: Colors.white,
+//                           backgroundImage: _userData['profile_image'] != null
+//                               ? NetworkImage(_userData['profile_image'])
+//                               : null,
+//                           child: _userData['profile_image'] == null
+//                               ? const Icon(Icons.person, size: 60, color: Colors.blue)
+//                               : null,
+//                         ),
+//                         const SizedBox(height: 16),
+//                         Text(
+//                           _userData['name'] ?? 'User',
+//                           style: const TextStyle(
+//                             fontSize: 24,
+//                             fontWeight: FontWeight.bold,
+//                             color: Colors.white,
+//                           ),
+//                         ),
+//                         const SizedBox(height: 8),
+//                         Container(
+//                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+//                           decoration: BoxDecoration(
+//                             color: Colors.white24,
+//                             borderRadius: BorderRadius.circular(20),
+//                           ),
+//                           child: Text(
+//                             _userData['role']?.toUpperCase() ?? 'MEMBER',
+//                             style: const TextStyle(color: Colors.white),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+                  
+//                   // User Details
+//                   Container(
+//                     padding: const EdgeInsets.all(16),
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         const Text(
+//                           'Personal Information',
+//                           style: TextStyle(
+//                             fontSize: 20,
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                         const SizedBox(height: 16),
+//                         _buildInfoCard(Icons.email, 'Email', _userData['email'] ?? 'N/A'),
+//                         _buildInfoCard(Icons.people, 'Father\'s Name', _userData['father_name'] ?? 'N/A'),
+//                         _buildInfoCard(Icons.people, 'Mother\'s Name', _userData['mother_name'] ?? 'N/A'),
+//                         _buildInfoCard(Icons.home, 'Address', _userData['address'] ?? 'N/A'),
+//                         _buildInfoCard(Icons.school, 'Education', _userData['current_education'] ?? 'N/A'),
+//                       ],
+//                     ),
+//                   ),
+                  
+//                   // NID Image
+//                   if (_userData['nid_image'] != null)
+//                     Container(
+//                       padding: const EdgeInsets.all(16),
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           const Text(
+//                             'NID Document',
+//                             style: TextStyle(
+//                               fontSize: 20,
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                           const SizedBox(height: 8),
+//                           Container(
+//                             height: 200,
+//                             decoration: BoxDecoration(
+//                               border: Border.all(color: Colors.grey),
+//                               borderRadius: BorderRadius.circular(12),
+//                             ),
+//                             child: ClipRRect(
+//                               borderRadius: BorderRadius.circular(12),
+//                               child: Image.network(
+//                                 _userData['nid_image'],
+//                                 fit: BoxFit.cover,
+//                                 errorBuilder: (context, error, stackTrace) {
+//                                   return const Center(child: Icon(Icons.error));
+//                                 },
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+                  
+//                   const SizedBox(height: 32),
+//                 ],
+//               ),
+//             ),
+//     );
+//   }
+
+//   Widget _buildInfoCard(IconData icon, String label, String value) {
+//     return Card(
+//       margin: const EdgeInsets.only(bottom: 12),
+//       child: ListTile(
+//         leading: Icon(icon, color: Colors.blue),
+//         title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+//         subtitle: Text(value),
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,599 +194,231 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _fatherNameController = TextEditingController();
-  final _motherNameController = TextEditingController();
-  final _educationController = TextEditingController();
-  final _phoneController = TextEditingController();
-  
+  Map<String, dynamic> _userData = {};
   bool _isLoading = true;
-  bool _isEditing = false;
-  String _userId = '';
-  String? _userRole;
-  String? _profilePhotoUrl;
-  File? _profileImage;
-  String? _nidPhotoUrl;
-  File? _nidImage;
-  String? _memberId;
 
   @override
   void initState() {
     super.initState();
-    _loadUserProfile();
+    _loadLoggedInUser();
   }
 
-  Future<void> _loadUserProfile() async {
+  Future<void> _loadLoggedInUser() async {
     setState(() => _isLoading = true);
-    final user = Supabase.instance.client.auth.currentUser;
-    
-    if (user == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please login again')),
-        );
-        Navigator.pushReplacementNamed(context, '/login');
-      }
-      return;
-    }
-    
-    _userId = user.id;
     
     try {
-      // Load from users table
-      final userResponse = await Supabase.instance.client
-          .from('users')
-          .select('*')
-          .eq('id', _userId)
-          .single();
+      // Get stored user email from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final userEmail = prefs.getString('loggedInUserEmail');
       
-      _nameController.text = userResponse['name'] ?? '';
-      _addressController.text = userResponse['address'] ?? '';
-      _fatherNameController.text = userResponse['father_name'] ?? '';
-      _motherNameController.text = userResponse['mother_name'] ?? '';
-      _educationController.text = userResponse['education'] ?? '';
-      _profilePhotoUrl = userResponse['profile_photo_url'];
-      _nidPhotoUrl = userResponse['nid_photo_url'];
-      _userRole = userResponse['role'];
-      
-      // Load from members table
-      final memberResponse = await Supabase.instance.client
-          .from('members')
-          .select('*')
-          .eq('user_id', _userId)
-          .maybeSingle();
-      
-      if (memberResponse != null) {
-        _memberId = memberResponse['id'];
-        _phoneController.text = memberResponse['phone'] ?? '';
-        if (_nameController.text.isEmpty) {
-          _nameController.text = memberResponse['name'] ?? '';
-        }
-      }
-      
-      setState(() {});
-    } catch (e) {
-      print('Error loading profile: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading profile: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _updateProfile() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      
-      try {
-        if (_userId.isEmpty) {
-          throw Exception('User ID is missing');
-        }
-        
-        String? profilePhotoUrl = _profilePhotoUrl;
-        String? nidPhotoUrl = _nidPhotoUrl;
-        
-        // Upload profile photo if selected
-        if (_profileImage != null) {
-          final fileExt = _profileImage!.path.split('.').last;
-          final fileName = 'profile_${_userId}_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
-          
-          await Supabase.instance.client.storage
-              .from('profile_photos')
-              .upload(fileName, _profileImage!);
-          
-          profilePhotoUrl = Supabase.instance.client.storage
-              .from('profile_photos')
-              .getPublicUrl(fileName);
-        }
-        
-        // Upload NID photo if selected
-        if (_nidImage != null) {
-          final fileExt = _nidImage!.path.split('.').last;
-          final fileName = 'nid_${_userId}_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
-          
-          await Supabase.instance.client.storage
-              .from('nid_photos')
-              .upload(fileName, _nidImage!);
-          
-          nidPhotoUrl = Supabase.instance.client.storage
-              .from('nid_photos')
-              .getPublicUrl(fileName);
-        }
-        
-        // Update users table
-        await Supabase.instance.client
+      if (userEmail != null && userEmail.isNotEmpty) {
+        // Fetch user data by email
+        final response = await Supabase.instance.client
             .from('users')
-            .update({
-              'name': _nameController.text,
-              'address': _addressController.text,
-              'father_name': _fatherNameController.text,
-              'mother_name': _motherNameController.text,
-              'education': _educationController.text,
-              'profile_photo_url': profilePhotoUrl ?? '',
-              'nid_photo_url': nidPhotoUrl ?? '',
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('id', _userId);
+            .select()
+            .eq('email', userEmail)
+            .single();
         
-        // Update or insert into members table
-        if (_memberId != null) {
-          // Update existing member
-          await Supabase.instance.client
-              .from('members')
-              .update({
-                'name': _nameController.text,
-                'phone': _phoneController.text,
-                'email': Supabase.instance.client.auth.currentUser?.email,
-              })
-              .eq('id', _memberId!);
+        setState(() {
+          _userData = response;
+          _isLoading = false;
+        });
+      } else {
+        // Fallback to first user (for demo)
+        final response = await Supabase.instance.client
+            .from('users')
+            .select()
+            .limit(1);
+        
+        if (response.isNotEmpty) {
+          setState(() {
+            _userData = response[0];
+            _isLoading = false;
+          });
         } else {
-          // Insert new member
-          final newMember = await Supabase.instance.client
-              .from('members')
-              .insert({
-                'user_id': _userId,
-                'name': _nameController.text,
-                'phone': _phoneController.text,
-                'email': Supabase.instance.client.auth.currentUser?.email,
-                'join_date': DateTime.now().toIso8601String(),
-                'is_active': true,
-              })
-              .select()
-              .single();
-          
-          _memberId = newMember['id'];
-        }
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully!')),
-          );
-        }
-        
-        setState(() => _isEditing = false);
-        await _loadUserProfile(); // Reload fresh data
-      } catch (e) {
-        print('Error updating profile: $e');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error updating profile: $e')),
-          );
-        }
-      } finally {
-        if (mounted) {
           setState(() => _isLoading = false);
         }
       }
-    }
-  }
-
-  Future<void> _pickImage(ImageSource source, String type) async {
-    try {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(
-        source: source,
-        imageQuality: 80,
-        maxWidth: 1024,
-        maxHeight: 1024,
-      );
-      
-      if (pickedFile != null && mounted) {
-        setState(() {
-          if (type == 'profile') {
-            _profileImage = File(pickedFile.path);
-          } else {
-            _nidImage = File(pickedFile.path);
-          }
-        });
-      }
     } catch (e) {
+      print('Error loading user: $e');
+      setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error picking image: $e')),
+          SnackBar(content: Text('Error loading profile: ${e.toString()}')),
         );
       }
     }
   }
 
-  void _showImagePickerOptions(String type) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 10),
-            const Text(
-              'Choose Image Source',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.green),
-              title: const Text('Camera'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.camera, type);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library, color: Colors.green),
-              title: const Text('Gallery'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery, type);
-              },
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
-      ),
-    );
+  Future<void> _logout() async {
+    try {
+      // Clear stored user data
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('loggedInUserEmail');
+      
+      await Supabase.instance.client.auth.signOut();
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/');
+      }
+    } catch (e) {
+      print('Logout error: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentUserEmail = Supabase.instance.client.auth.currentUser?.email ?? '';
-    
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Profile' : 'My Profile'),
-        backgroundColor: Colors.green,
+        title: const Text('My Profile'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
         actions: [
-          if (!_isLoading)
-            IconButton(
-              icon: Icon(_isEditing ? Icons.save : Icons.edit),
-              onPressed: () {
-                if (_isEditing) {
-                  _updateProfile();
-                } else {
-                  setState(() => _isEditing = true);
-                }
-              },
-            ),
-          if (_isEditing)
-            IconButton(
-              icon: const Icon(Icons.cancel),
-              onPressed: () {
-                setState(() => _isEditing = false);
-                _loadUserProfile();
-              },
-            ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
+          ),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    // Profile Photo Card
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
+          : _userData.isEmpty
+              ? const Center(child: Text('No user data found'))
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Profile Header
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(32),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.blue, Colors.purple],
+                          ),
+                        ),
                         child: Column(
                           children: [
-                            // Profile Photo Section
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.green, width: 3),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 60,
-                                    backgroundColor: Colors.green[100],
-                                    backgroundImage: _profileImage != null
-                                        ? FileImage(_profileImage!)
-                                        : (_profilePhotoUrl != null && _profilePhotoUrl!.isNotEmpty
-                                            ? NetworkImage(_profilePhotoUrl!)
-                                            : null),
-                                    child: (_profileImage == null && (_profilePhotoUrl == null || _profilePhotoUrl!.isEmpty))
-                                        ? Text(
-                                            _nameController.text.isNotEmpty
-                                                ? _nameController.text[0].toUpperCase()
-                                                : '?',
-                                            style: const TextStyle(fontSize: 50, color: Colors.green),
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                                if (_isEditing)
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          const BoxShadow(color: Colors.black26, blurRadius: 5),
-                                        ],
-                                      ),
-                                      child: IconButton(
-                                        icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
-                                        onPressed: () => _showImagePickerOptions('profile'),
-                                        padding: const EdgeInsets.all(8),
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                            CircleAvatar(
+                              radius: 60,
+                              backgroundColor: Colors.white,
+                              backgroundImage: _userData['profile_image'] != null && 
+                                              _userData['profile_image'].toString().isNotEmpty
+                                  ? NetworkImage(_userData['profile_image'])
+                                  : null,
+                              child: _userData['profile_image'] == null || 
+                                      _userData['profile_image'].toString().isEmpty
+                                  ? const Icon(Icons.person, size: 60, color: Colors.blue)
+                                  : null,
                             ),
-                            const SizedBox(height: 20),
-                            
-                            // Personal Information Section
-                            const Text(
-                              'Personal Information',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
-                            ),
-                            const SizedBox(height: 15),
-                            
-                            // Full Name
-                            TextFormField(
-                              controller: _nameController,
-                              enabled: _isEditing,
-                              decoration: InputDecoration(
-                                labelText: 'Full Name *',
-                                hintText: 'Enter your full name',
-                                prefixIcon: const Icon(Icons.person),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) return 'Please enter your name';
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 15),
-                            
-                            // Phone Number
-                            TextFormField(
-                              controller: _phoneController,
-                              enabled: _isEditing,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                labelText: 'Phone Number',
-                                hintText: 'Enter your phone number',
-                                prefixIcon: const Icon(Icons.phone),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            const SizedBox(height: 16),
+                            Text(
+                              _userData['name'] ?? 'User',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
                             ),
-                            const SizedBox(height: 15),
-                            
-                            // Address
-                            TextFormField(
-                              controller: _addressController,
-                              enabled: _isEditing,
-                              maxLines: 2,
-                              decoration: InputDecoration(
-                                labelText: 'Address',
-                                hintText: 'Enter your address',
-                                prefixIcon: const Icon(Icons.home),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white24,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                _userData['role']?.toUpperCase() ?? 'MEMBER',
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
-                            const SizedBox(height: 15),
-                            
-                            // Father's Name
-                            TextFormField(
-                              controller: _fatherNameController,
-                              enabled: _isEditing,
-                              decoration: InputDecoration(
-                                labelText: "Father's Name",
-                                hintText: "Enter your father's name",
-                                prefixIcon: const Icon(Icons.people),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            
-                            // Mother's Name
-                            TextFormField(
-                              controller: _motherNameController,
-                              enabled: _isEditing,
-                              decoration: InputDecoration(
-                                labelText: "Mother's Name",
-                                hintText: "Enter your mother's name",
-                                prefixIcon: const Icon(Icons.people),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            
-                            // Education
-                            TextFormField(
-                              controller: _educationController,
-                              enabled: _isEditing,
-                              decoration: InputDecoration(
-                                labelText: 'Education',
-                                hintText: 'Your educational qualification',
-                                prefixIcon: const Icon(Icons.school),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                            
-                            const SizedBox(height: 20),
-                            const Divider(),
-                            const SizedBox(height: 10),
-                            
-                            // NID Photo Section
-                            if (_isEditing)
-                              Column(
-                                children: [
-                                  const Text(
-                                    'NID /身份证 Photo',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  GestureDetector(
-                                    onTap: () => _showImagePickerOptions('nid'),
-                                    child: Container(
-                                      height: 200,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: Colors.grey[300]!),
-                                      ),
-                                      child: _nidImage != null
-                                          ? ClipRRect(
-                                              borderRadius: BorderRadius.circular(10),
-                                              child: Image.file(
-                                                _nidImage!,
-                                                fit: BoxFit.cover,
-                                                width: double.infinity,
-                                              ),
-                                            )
-                                          : Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Icon(Icons.upload_file, size: 50, color: Colors.grey[600]),
-                                                const SizedBox(height: 10),
-                                                Text(
-                                                  'Tap to upload NID photo',
-                                                  style: TextStyle(color: Colors.grey[600]),
-                                                ),
-                                                Text(
-                                                  '(Camera or Gallery)',
-                                                  style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            
-                            if (_nidPhotoUrl != null && _nidPhotoUrl!.isNotEmpty && !_isEditing)
-                              Column(
-                                children: [
-                                  const Text(
-                                    'NID Photo:',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      _nidPhotoUrl!,
-                                      height: 200,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Container(
-                                          height: 200,
-                                          color: Colors.grey[200],
-                                          child: const Center(
-                                            child: Text('Failed to load image'),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
                           ],
                         ),
                       ),
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // Account Information Card
-                    Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
+                      
+                      // User Details
+                      Container(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Account Information',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green),
+                              'Personal Information',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            const SizedBox(height: 10),
-                            ListTile(
-                              leading: const Icon(Icons.email, color: Colors.green),
-                              title: const Text('Email Address'),
-                              subtitle: Text(currentUserEmail),
-                              dense: true,
-                            ),
-                            const Divider(),
-                            ListTile(
-                              leading: const Icon(Icons.admin_panel_settings, color: Colors.green),
-                              title: const Text('Role'),
-                              subtitle: Text(_userRole ?? 'Member'),
-                              dense: true,
-                            ),
+                            const SizedBox(height: 16),
+                            _buildInfoCard(Icons.email, 'Email', _userData['email'] ?? 'N/A'),
+                            _buildInfoCard(Icons.people, 'Father\'s Name', _userData['father_name'] ?? 'N/A'),
+                            _buildInfoCard(Icons.people, 'Mother\'s Name', _userData['mother_name'] ?? 'N/A'),
+                            _buildInfoCard(Icons.home, 'Address', _userData['address'] ?? 'N/A'),
+                            _buildInfoCard(Icons.school, 'Education', _userData['current_education'] ?? 'N/A'),
                           ],
                         ),
                       ),
-                    ),
-                    
-                    if (!_isEditing && _memberId != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.green[50],
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.green[200]!),
-                          ),
-                          child: Row(
+                      
+                      // NID Image
+                      if (_userData['nid_image'] != null && 
+                          _userData['nid_image'].toString().isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(Icons.check_circle, color: Colors.green[600]),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  'Your profile is complete! You can edit anytime.',
-                                  style: TextStyle(color: Colors.green[800]),
+                              const Text(
+                                'NID Document',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    _userData['nid_image'],
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.error, size: 50),
+                                            SizedBox(height: 8),
+                                            Text('Failed to load NID image'),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                  ],
+                      
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
-              ),
-            ),
+    );
+  }
+
+  Widget _buildInfoCard(IconData icon, String label, String value) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blue),
+        title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(value),
+      ),
     );
   }
 }
